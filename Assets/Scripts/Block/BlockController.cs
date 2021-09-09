@@ -22,26 +22,24 @@ public class BlockController : MonoBehaviour {
     public IObservable<bool> OnFalled {
         get { return m_fallSubject; }
     }
-    // 落下イベント
+    // 列消しイベント
     private Subject<bool> m_isLineUpSubject = new Subject<bool>();
     public IObservable<bool> OnLineUp {
         get { return m_isLineUpSubject; }
+    }
+    // ゲーム終了判定イベント
+    private Subject<bool> m_gameFinSubject = new Subject<bool>();
+    public IObservable<bool> OnGameFinSubject {
+        get { return m_gameFinSubject; }
     }
 
     private Block m_currentBlock; //!< ブロック
     private bool  m_isActive;     //!< 制御できるかどうか
     public bool IsActive {
-        get => m_isActive;
+        get => m_isActive && m_currentBlock != null;
     }
 
-    /**
-     * @brief 開始時処理
-     * @return なし
-     */
-    public void OnStart() {
-        // 初期化処理
-        m_isActive = true;
-
+    private void Start() {
         // 回転処理
         this.UpdateAsObservable()
             .Where(_ => IsActive && Input.GetKeyDown(KeyCode.UpArrow) && m_currentBlock.IsRotate(new Vector3(90, 0, 0)))
@@ -58,7 +56,7 @@ public class BlockController : MonoBehaviour {
 
         // 移動処理
         this.UpdateAsObservable()
-            .Where(_ => IsActive && Input.GetKeyDown(KeyCode.W) && m_currentBlock.IsMove(1.0f,Axistypes.Z))
+            .Where(_ => IsActive && Input.GetKeyDown(KeyCode.W) && m_currentBlock.IsMove(1.0f, Axistypes.Z))
             .Subscribe(_ => m_currentBlock?.Move(1.0f, Axistypes.Z)).AddTo(this);
         this.UpdateAsObservable()
             .Where(_ => IsActive && Input.GetKeyDown(KeyCode.S) && m_currentBlock.IsMove(-1.0f, Axistypes.Z))
@@ -73,12 +71,21 @@ public class BlockController : MonoBehaviour {
         // 落下処理
         this.UpdateAsObservable()
             .Where(_ => IsActive && m_currentBlock.IsActive)
-            .Subscribe(_ => m_currentBlock.FallMove(Time.deltaTime * 0.1f)).AddTo(this);
+            .Subscribe(_ => m_currentBlock.FallMove(Time.deltaTime * 0.1f))
+            .AddTo(this);
         this.UpdateAsObservable()
             .Where(_ => IsActive && Input.GetKeyDown(KeyCode.Z))
             .Subscribe(_ => {
                 m_currentBlock.Fall();
             }).AddTo(this);
+    }
+
+    /**
+     * @brief 開始時処理
+     * @return なし
+     */
+    public void OnStart() {
+        m_isActive = true;
     }
 
     /**
@@ -90,9 +97,15 @@ public class BlockController : MonoBehaviour {
         m_currentBlock = block;
         m_currentBlock.OnActive.Subscribe(_ => {
             m_fallSubject.OnNext(true);
-        });
+        }).AddTo(m_currentBlock);
         m_currentBlock.OnLineUpSubject.Subscribe(_ => {
             m_isLineUpSubject.OnNext(true);
-        });
+        }).AddTo(m_currentBlock);
+        m_currentBlock.OnGameFinSubject.Subscribe(_ => {
+            m_isActive = false;
+            Destroy(m_currentBlock.gameObject);
+            m_currentBlock = null;
+            m_gameFinSubject.OnNext(true);
+        }).AddTo(m_currentBlock);
     }
 }

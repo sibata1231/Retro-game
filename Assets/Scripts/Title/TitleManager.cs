@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Cinemachine;
 using UniRx;
+using UniRx.Triggers;
 
 public enum GameModes {
     STANDARD = 0,
@@ -32,7 +33,7 @@ public class TitleManager : SingletonMonoBehaviour<TitleManager> {
 
     private CinemachineTransposer              m_titleCinemachineTransposer;
     private CinemachineBasicMultiChannelPerlin m_titleCinemachineBasicMultiChannelPerlin;
-
+    private bool m_isStart;
     // 落下イベント
     private Subject<GameModes> m_gameStartSubject = new Subject<GameModes>();
     public IObservable<GameModes> OnGameStart {
@@ -43,19 +44,30 @@ public class TitleManager : SingletonMonoBehaviour<TitleManager> {
      * @return なし
      */
     void Start() {
-        m_titleObject.SetActive(false);
         m_titleCinemachineTransposer              = m_titleCinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();
         m_titleCinemachineBasicMultiChannelPerlin = m_titleCinemachineVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-        m_backGround.enabled = false;
-        startAnimation();
-    }
+        OnStart();
 
-    /**
-     * @brief 更新処理
-     * @return なし
-     */
-    void Update() {
-        
+        this.UpdateAsObservable()
+            .Where(_ => !m_isStart && Input.GetKeyDown(KeyCode.Return))
+            .Subscribe(_ => {
+                m_isStart = true;
+                SendStandard();
+            }).AddTo(this);
+        this.UpdateAsObservable()
+            .Where(_ => !m_isStart && Input.GetKeyDown(KeyCode.Escape))
+            .Subscribe(_ => {
+                m_isStart = true;
+                SendExit();
+            }).AddTo(this);
+    }
+    
+    public void OnStart() {
+        m_isStart = true;
+        m_titleObject.SetActive(false);
+        m_backGround.enabled = false;
+        m_titleCinemachineVirtualCamera.m_Priority = 11;
+        startAnimation();
     }
 
     public void startAnimation() {
@@ -66,9 +78,10 @@ public class TitleManager : SingletonMonoBehaviour<TitleManager> {
         float   gain         = m_titleCinemachineBasicMultiChannelPerlin.m_AmplitudeGain;
 
         DOVirtual.DelayedCall(
-            4.5f,
+            4.0f,
             () => {
                 m_backGround.enabled = true;
+                m_isStart            = false;
                 m_titleObject.SetActive(true);
                 m_titleCanvas.DOFade(1.0f, 0.3f).OnComplete(() => m_backGround.DOFade(0.0f, 0.5f).OnComplete(() => m_backGround.enabled = false));
                 foreach (var block in m_blocks) {
@@ -81,11 +94,13 @@ public class TitleManager : SingletonMonoBehaviour<TitleManager> {
                 DOTween.To(() => gain, (val) => {
                     m_titleCinemachineBasicMultiChannelPerlin.m_AmplitudeGain = val;
                 }, 0.0f, 1.0f);
+
             }
         );
     }
 
     public void endAnimation(GameModes gameModes) {
+        m_titleObject.SetActive(false);
         m_titleCinemachineVirtualCamera.m_Priority = 9;
         m_titleCanvas.DOFade(0.0f, 0.3f).OnComplete(()=> m_gameStartSubject.OnNext(gameModes));
     }

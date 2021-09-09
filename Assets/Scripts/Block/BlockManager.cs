@@ -24,6 +24,31 @@ public class BlockManager : SingletonMonoBehaviour<BlockManager> {
     private int         m_score;        //!< スコア
     private int         m_scoreCount;   //!< スコアカウント
     private bool        m_isScoreCount; //!< スコアカウントフラグ
+
+    // 落下イベント
+    private Subject<int> m_addScoreSubject = new Subject<int>();
+    public IObservable<int> OnAddScore {
+        get { return m_addScoreSubject; }
+    }
+
+    // ゲーム終了判定イベント
+    private Subject<bool> m_gameFinSubject = new Subject<bool>();
+    public IObservable<bool> OnGameFinSubject {
+        get { return m_gameFinSubject; }
+    }
+
+    private void Start() {
+        m_blockController.OnFalled.Subscribe(x => {
+            addBlock();
+        });
+        m_blockController.OnLineUp.Subscribe(x => {
+            StartCoroutine("checkScoreCount");
+        });
+        m_blockController.OnGameFinSubject.Subscribe(x => {
+            m_gameFinSubject.OnNext(true);
+        });
+    }
+
     /**
      * @brief 開始時処理
      * @return なし
@@ -34,13 +59,6 @@ public class BlockManager : SingletonMonoBehaviour<BlockManager> {
         m_blockController.OnStart();
 
         addBlock();
-        m_blockController.OnFalled.Subscribe(x => {
-            addBlock();
-        });
-        m_blockController.OnLineUp.Subscribe(x => {
-            Debug.Log(x);
-            StartCoroutine("checkScoreCount");
-        });
     }
 
     private IEnumerator checkScoreCount() {
@@ -57,15 +75,16 @@ public class BlockManager : SingletonMonoBehaviour<BlockManager> {
             m_score += 100 * i;
         }
         m_scoreCount = 1;
-        Debug.Log(m_score);
+        m_addScoreSubject.OnNext(m_score);
     }
+
     /**
      * @brief ブロック追加処理
      * @return なし
      */
     private void addBlock() {
         int index              = UnityEngine.Random.Range(0, m_blockPrefabs.Length);
-        GameObject blockObject = Instantiate(m_blockPrefabs[index], new Vector3(0.5f, 5.0f, 0.5f), Quaternion.identity, transform);
+        GameObject blockObject = Instantiate(m_blockPrefabs[index], new Vector3(0.5f, 4.0f, 0.5f), Quaternion.identity, transform);
         Block block            = blockObject.GetComponent<Block>();
 
         m_blockController.Register(block); // プレイヤー制御

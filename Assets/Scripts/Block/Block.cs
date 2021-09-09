@@ -45,10 +45,16 @@ namespace GameMain {
             get { return m_isActiveSubject; }
         }
 
-        // 落下イベント
+        // 列消しイベント
         private Subject<bool> m_isLineUpSubject = new Subject<bool>();
         public IObservable<bool> OnLineUpSubject {
             get { return m_isLineUpSubject; }
+        }
+
+        // ゲーム終了判定イベント
+        private Subject<bool> m_gameFinSubject = new Subject<bool>();
+        public IObservable<bool> OnGameFinSubject {
+            get { return m_gameFinSubject; }
         }
 
         private const int BLOCK_SIZE_X = 3; //!< ブロック許容値_X軸
@@ -171,8 +177,10 @@ namespace GameMain {
                     }
                 }
             }
-            transform.DOLocalMoveY(m_fallTransform.position.y + 1.0f, 0.3f).OnComplete(() => checkColumnBlock());
-            StartCoroutine("DeleteCoroutine");
+            if (m_fallTransform != null) {
+                transform.DOLocalMoveY(m_fallTransform.position.y + 1.0f, 0.3f).OnComplete(() => checkColumnBlock());
+                StartCoroutine("DeleteCoroutine");
+            }
         }
 
         /**
@@ -182,13 +190,17 @@ namespace GameMain {
         IEnumerator DeleteCoroutine() {
             m_isActive = false;
             m_isActiveSubject.OnNext(false);
-            var time = 10;
+            int time = 2;
             while (time > 0) {
                 time--;
                 yield return new WaitForSeconds(0.1f);
             }
+            if (m_fallTransform.position.y + 1.0f >= GameMain.StageInfo.DEPTH / 3) {
+                m_gameFinSubject.OnNext(true);
+                //Debug.Log("ゲーム終了");
+            }
             foreach (var cube in m_cubeDatas) {
-                cube.Delete();
+                cube.Delete(m_fallTransform.position.y + 1.0f);
             }
         }
 

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6839974784403945903}
   m_Layer: 0
   m_Name: Blcok 4
-  m_TagString: Untagged
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,7 +63,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
@@ -211,7 +211,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
@@ -285,7 +285,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
@@ -355,7 +355,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
@@ -425,7 +425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
@@ -499,7 +499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562256, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 3794438158649562260, guid: ebbba6a2e968c8c439a10b3a96d8c87b, type: 3}
       propertyPath: m_RootOrder
