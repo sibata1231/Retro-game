@@ -42,7 +42,7 @@ public class OutlineRendererPass : ScriptableRenderPass {
         CB.ClearRenderTarget(false, true, Color.clear);
 
         // アウトラインを着けたいオブジェクトを描画
-        foreach (Renderer renderer in parentRendererFeature.contentRenderers) {
+        foreach (Renderer renderer in GameObject.FindGameObjectsWithTag("Outline").Select(x => x.GetComponent<Renderer>()).ToList()) {
             if (renderer == null) continue; // Play終了時に、Listは破棄されずその参照先のみ破棄されるのでScene描画のために入れとかないと例のマゼンダ(ry
             // オブジェクトのマテリアルすべてでかつForwardパスで描画
             for (int i = 0; i < renderer.sharedMaterials.Length; i++) {
