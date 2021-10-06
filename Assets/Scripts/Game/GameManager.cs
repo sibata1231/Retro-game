@@ -11,6 +11,7 @@ using UnityEngine;
 using Cinemachine;
 using UniRx;
 using TMPro;
+using DG.Tweening;
 
 /**
  * @class GameManager
@@ -21,6 +22,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager> {
     [SerializeField] private CanvasGroup              m_gameCanvas                   = default; 
     [SerializeField] private TextMeshProUGUI          m_scoreText                    = default;
     [SerializeField] private GameObject[]             m_gameObjects                  = default;
+    [SerializeField] private AudioSource              m_bgmSource                    = default;
 
     /**
      * @brief 開始時処理
@@ -49,7 +51,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager> {
             foreach (var obj in m_gameObjects) {
                 obj.SetActive(false);
             }
-
+            m_bgmSource.DOFade(0.0f, 1.0f).OnComplete(() => m_bgmSource.Stop());
             m_gameCanvas.alpha          = 1.0f;
             m_gameCanvas.interactable   = false;
             m_gameCanvas.blocksRaycasts = false;
@@ -68,6 +70,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager> {
     }
 
     private void gameStartAnimation() {
+        m_bgmSource.DOFade(0.2f, 1.0f);
+        m_bgmSource.Play();
+
         m_gameCinemachineVirtualCamera.Priority = 11;
         m_gameCanvas.alpha          = 1.0f;
         m_gameCanvas.interactable   = true;

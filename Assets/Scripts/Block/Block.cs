@@ -225,7 +225,7 @@ namespace GameMain {
             if (cubeDatas.Count == StageInfo.WIDTH) {
                 m_isLineUpSubject.OnNext(true);
                 foreach (var cube in cubeDatas) {
-                    Destroy(cube);
+                    cube.GetComponent<Cube>().Destroy();
                 }
             }
         }

@@ -598,6 +598,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mainRenderer: {fileID: 3794438158649562262}
   m_mainMaterial: {fileID: 2100000, guid: e6ba041768e725349adad345af8e831d, type: 2}
+  m_dissolveMaterial: {fileID: 2100000, guid: df0708367f4c3bc4f9cddfc6416b2f18, type: 2}
   m_subRenderers:
   - {fileID: 2723277268802128734}
   - {fileID: 5069479124968508265}
